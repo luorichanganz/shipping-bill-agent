@@ -1,0 +1,161 @@
+[
+  {
+    "operation": "CREATE",
+    "document_info": {
+      "document_type": "Debit Note",
+      "reference_no": "DC-108478",
+      "document_date": "2026-10-24",
+      "bill_of_lading_no": "MAEU275752922 DEL / ETA : SAVANNAH, GA (UNITED STATES) / 10-28-2026",
+      "booking_no": null,
+      "container_no": "MRSU2571577"
+    },
+    "transaction_party": {
+      "issuer": "NEPTUNE SHIPPING LIMITED (LAX)",
+      "recipient": "湃乐多（上海）航运科技有限公司"
+    },
+    "charge_details": {
+      "raw_charge_item": "HANDLING CHARGE",
+      "charge_item": "Handling Charge",
+      "quantity": 1.0,
+      "unit_price": 65.0,
+      "amount": 65.0,
+      "currency": "USD",
+      "payment_term": "CC",
+      "charge_direction": "CHARGE"
+    },
+    "financial_attributes": {
+      "accounting_entity": "湃乐多（上海）航运科技有限公司",
+      "posting_type": "AP"
+    },
+    "audit_trail": {
+      "matched_bill_id": null,
+      "match_strategy": null,
+      "changed_fields": [],
+      "evidence": [
+        {
+          "source_id": "pdf-70dcc3e7d07a0012",
+          "block_id": "pdf-70dcc3e7d07a0012:p1:text",
+          "quote": "湃乐多（上海）航运科技有限公司\nPilot Aiship Tech co., Ltd.\nDEBIT NOTE\nD/C No. : DC-108478\nD/C DATE 10-24-2026\nDUE DATE 10-24-2026\nTERMS COD\nTOTAL AMOUNT 1,410.40 CURRENCY USD\nOUR FILE NO. : OI-26090566 POR / ETD : QINGDAO LIUTING INTERNATIONAL APT (CHINA) /\nAGENT FILE NO. : CGTSE260801188 POL / ETD : QINGDAO LIUTING INTERNATIONAL APT (CHINA) / 08-30-2026\nMASTER B/L NO. : MAEU275752922 DEL / ETA : SAVANNAH, GA (UNITED STATES) / 10-28-2026\nHOUSE B/L NO. : CGT260801188 POD / ETA : SAVANNAH, GA (UNITED STATES) / 1",
+          "field": "raw_charge_item"
+        }
+      ],
+      "source_hashes": [
+        "70dcc3e7d07a0012fc642af256371f25438eed2c7bbe25442b7ffbd193fd34ba"
+      ],
+      "warnings": [
+        "未配置 OCR 客户端，仅使用 PDF 内嵌文本"
+      ],
+      "confidence": 0.92,
+      "ai_reasoning": [
+        "未匹配到已有账单",
+        "费用字段通过校验，执行新增"
+      ]
+    }
+  },
+  {
+    "operation": "CREATE",
+    "document_info": {
+      "document_type": "Debit Note",
+      "reference_no": "DC-108478",
+      "document_date": "2026-10-24",
+      "bill_of_lading_no": "MAEU275752922 DEL / ETA : SAVANNAH, GA (UNITED STATES) / 10-28-2026",
+      "booking_no": null,
+      "container_no": "MRSU2571577"
+    },
+    "transaction_party": {
+      "issuer": "NEPTUNE SHIPPING LIMITED (LAX)",
+      "recipient": "湃乐多（上海）航运科技有限公司"
+    },
+    "charge_details": {
+      "raw_charge_item": "4 ADD'L DETENTION FREE TIME CHARGE",
+      "charge_item": "Detention Charge",
+      "quantity": 1.0,
+      "unit_price": 1310.4,
+      "amount": 1310.4,
+      "currency": "USD",
+      "payment_term": "CC",
+      "charge_direction": "CHARGE"
+    },
+    "financial_attributes": {
+      "accounting_entity": "湃乐多（上海）航运科技有限公司",
+      "posting_type": "AP"
+    },
+    "audit_trail": {
+      "matched_bill_id": null,
+      "match_strategy": null,
+      "changed_fields": [],
+      "evidence": [
+        {
+          "source_id": "pdf-70dcc3e7d07a0012",
+          "block_id": "pdf-70dcc3e7d07a0012:p1:text",
+          "quote": "湃乐多（上海）航运科技有限公司\nPilot Aiship Tech co., Ltd.\nDEBIT NOTE\nD/C No. : DC-108478\nD/C DATE 10-24-2026\nDUE DATE 10-24-2026\nTERMS COD\nTOTAL AMOUNT 1,410.40 CURRENCY USD\nOUR FILE NO. : OI-26090566 POR / ETD : QINGDAO LIUTING INTERNATIONAL APT (CHINA) /\nAGENT FILE NO. : CGTSE260801188 POL / ETD : QINGDAO LIUTING INTERNATIONAL APT (CHINA) / 08-30-2026\nMASTER B/L NO. : MAEU275752922 DEL / ETA : SAVANNAH, GA (UNITED STATES) / 10-28-2026\nHOUSE B/L NO. : CGT260801188 POD / ETA : SAVANNAH, GA (UNITED STATES) / 1",
+          "field": "raw_charge_item"
+        }
+      ],
+      "source_hashes": [
+        "70dcc3e7d07a0012fc642af256371f25438eed2c7bbe25442b7ffbd193fd34ba"
+      ],
+      "warnings": [
+        "未配置 OCR 客户端，仅使用 PDF 内嵌文本"
+      ],
+      "confidence": 0.92,
+      "ai_reasoning": [
+        "未匹配到已有账单",
+        "费用字段通过校验，执行新增"
+      ]
+    }
+  },
+  {
+    "operation": "CREATE",
+    "document_info": {
+      "document_type": "Debit Note",
+      "reference_no": "DC-108478",
+      "document_date": "2026-10-24",
+      "bill_of_lading_no": "MAEU275752922 DEL / ETA : SAVANNAH, GA (UNITED STATES) / 10-28-2026",
+      "booking_no": null,
+      "container_no": "MRSU2571577"
+    },
+    "transaction_party": {
+      "issuer": "NEPTUNE SHIPPING LIMITED (LAX)",
+      "recipient": "湃乐多（上海）航运科技有限公司"
+    },
+    "charge_details": {
+      "raw_charge_item": "HANDLING CHARGE",
+      "charge_item": "Handling Charge",
+      "quantity": 1.0,
+      "unit_price": 35.0,
+      "amount": 35.0,
+      "currency": "USD",
+      "payment_term": "CC",
+      "charge_direction": "CHARGE"
+    },
+    "financial_attributes": {
+      "accounting_entity": "湃乐多（上海）航运科技有限公司",
+      "posting_type": "AP"
+    },
+    "audit_trail": {
+      "matched_bill_id": null,
+      "match_strategy": null,
+      "changed_fields": [],
+      "evidence": [
+        {
+          "source_id": "pdf-70dcc3e7d07a0012",
+          "block_id": "pdf-70dcc3e7d07a0012:p1:text",
+          "quote": "湃乐多（上海）航运科技有限公司\nPilot Aiship Tech co., Ltd.\nDEBIT NOTE\nD/C No. : DC-108478\nD/C DATE 10-24-2026\nDUE DATE 10-24-2026\nTERMS COD\nTOTAL AMOUNT 1,410.40 CURRENCY USD\nOUR FILE NO. : OI-26090566 POR / ETD : QINGDAO LIUTING INTERNATIONAL APT (CHINA) /\nAGENT FILE NO. : CGTSE260801188 POL / ETD : QINGDAO LIUTING INTERNATIONAL APT (CHINA) / 08-30-2026\nMASTER B/L NO. : MAEU275752922 DEL / ETA : SAVANNAH, GA (UNITED STATES) / 10-28-2026\nHOUSE B/L NO. : CGT260801188 POD / ETA : SAVANNAH, GA (UNITED STATES) / 1",
+          "field": "raw_charge_item"
+        }
+      ],
+      "source_hashes": [
+        "70dcc3e7d07a0012fc642af256371f25438eed2c7bbe25442b7ffbd193fd34ba"
+      ],
+      "warnings": [
+        "未配置 OCR 客户端，仅使用 PDF 内嵌文本"
+      ],
+      "confidence": 0.92,
+      "ai_reasoning": [
+        "未匹配到已有账单",
+        "费用字段通过校验，执行新增"
+      ]
+    }
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "bill_id": "BILL-DEMO-001",
+    "document_type": "Debit Note",
+    "reference_no": "DN-202609-001",
+    "document_date": "2026-09-20",
+    "issuer": "Destination Agent",
+    "recipient": "Origin Agent",
+    "bill_of_lading_no": null,
+    "booking_no": null,
+    "container_no": null,
+    "raw_charge_item": "H/D Fee",
+    "charge_item": "Handling Charge",
+    "quantity": null,
+    "unit_price": null,
+    "amount": 35.0,
+    "currency": "USD",
+    "payment_term": "PP",
+    "charge_direction": "CHARGE",
+    "accounting_entity": "Origin Agent",
+    "posting_type": "AP",
+    "source_hashes": []
+  }
+]
+
