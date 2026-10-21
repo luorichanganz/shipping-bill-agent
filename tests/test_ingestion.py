@@ -5,6 +5,7 @@ import subprocess
 from email.message import EmailMessage
 from pathlib import Path
 
+import pytest
 import requests
 import xlwt
 from docx import Document
@@ -111,6 +112,89 @@ def test_legacy_doc_prefers_word_then_falls_back(monkeypatch) -> None:
     monkeypatch.setattr(word, "_convert_with_libreoffice", lambda _data: b"libreoffice-docx")
 
     assert word._convert_legacy_doc(b"legacy-doc") == b"libreoffice-docx"
+
+
+def test_antiword_extracts_plain_text_blocks(monkeypatch) -> None:
+    from shipping_bill_agent.ingestion import word
+
+    def fake_run(command, **kwargs):
+        assert command[0] == "antiword"
+        assert command[1:3] == ["-w", "0"]
+        return subprocess.CompletedProcess(
+            command,
+            0,
+            b"Document Type: Invoice\nDoc Fee 25 USD\n\fPage 2",
+            b"",
+        )
+
+    monkeypatch.setattr(word.shutil, "which", lambda name: "antiword" if name == "antiword" else None)
+    monkeypatch.setattr(word.subprocess, "run", fake_run)
+
+    blocks = word._extract_with_antiword(b"legacy-doc", "word-test")
+
+    assert [block.text for block in blocks] == [
+        "Document Type: Invoice",
+        "Doc Fee 25 USD",
+        "Page 2",
+    ]
+    assert [block.page_no for block in blocks] == [1, 1, 2]
+
+
+def test_legacy_doc_falls_back_to_antiword(monkeypatch) -> None:
+    from shipping_bill_agent.ingestion import word
+    from shipping_bill_agent.ingestion.exceptions import DocumentParseError
+
+    def fail_conversion(_data):
+        raise DocumentParseError("结构化转换不可用")
+
+    monkeypatch.setattr(word, "_convert_legacy_doc", fail_conversion)
+    monkeypatch.setattr(
+        word,
+        "_extract_with_antiword",
+        lambda _data, source_id: word._plain_text_blocks(
+            "Document Type: Invoice\nDoc Fee 25 USD",
+            source_id,
+        ),
+    )
+
+    source = word.parse_word_bytes(
+        b"legacy-doc",
+        "bill.doc",
+        ParserContext(Settings()),
+    )[0]
+
+    assert source.source_type == "word"
+    assert source.mime_type == "application/msword"
+    assert source.metadata == {
+        "legacy_doc_backend": "antiword",
+        "table_structure_available": False,
+    }
+    assert source.text == "Document Type: Invoice\nDoc Fee 25 USD"
+
+
+def test_antiword_missing_is_reported(monkeypatch) -> None:
+    from shipping_bill_agent.ingestion import word
+    from shipping_bill_agent.ingestion.exceptions import DocumentParseError
+
+    monkeypatch.setattr(word.shutil, "which", lambda _name: None)
+
+    with pytest.raises(DocumentParseError, match="未安装 antiword"):
+        word._extract_with_antiword(b"legacy-doc", "word-test")
+
+
+def test_antiword_empty_output_is_rejected(monkeypatch) -> None:
+    from shipping_bill_agent.ingestion import word
+    from shipping_bill_agent.ingestion.exceptions import DocumentParseError
+
+    monkeypatch.setattr(word.shutil, "which", lambda _name: "antiword")
+    monkeypatch.setattr(
+        word.subprocess,
+        "run",
+        lambda command, **kwargs: subprocess.CompletedProcess(command, 0, b" \n", b""),
+    )
+
+    with pytest.raises(DocumentParseError, match="未输出可用文本"):
+        word._extract_with_antiword(b"legacy-doc", "word-test")
 
 
 def test_legacy_xls_is_parsed(tmp_path) -> None:

@@ -515,5 +515,11 @@ ExtractedCharge
 - `ruff check .` 通过。
 - 单段和多段 EML 正文均支持；源文件哈希随账单持久化，用于重复投递识别。
 - OCR 原文会检查 `0/O`、`1/I` 疑似混淆；命中后强制进入 `PENDING_REVIEW` 并保留证据。
-- 旧版 `.doc` 在 Windows 优先使用 Word COM 转换，LibreOffice 作为后备；已使用真实 `.doc` 验证转换和费用抽取。
+- 旧版 `.doc` 在 Windows 优先使用 Word COM 转换，LibreOffice 作为结构化后备；二者不可用或失败时使用 antiword 提取纯文本，并明确标记表格结构不可用。
+
+尚未完成的外部依赖验证：
+
+- 图片样本的在线 OCR 端到端识别需要将本地文件发布为 OCR 服务可访问的 URL。客户端、重试、响应适配和后续校验已经实现；当前尚未配置公开对象存储。
+- 真实 LLM 在线调用需要 `LLM_API_KEY` 或 `OPENAI_API_KEY`，在线回归还需设置 `RUN_LIVE_LLM_TESTS=1`。LangChain structured-output 链已创建并通过无网络构造检查，默认离线运行使用确定性抽取器。
+- `dist/shipping-bill-agent.zip` 是 2026-10-20 的旧快照，包内缺少后续新增源码和测试；如作为交付物使用，应在最终改动后重建并验证。
 

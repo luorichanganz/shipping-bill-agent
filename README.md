@@ -59,7 +59,7 @@ VISION_BASE_URL=
 VISION_MODEL=
 ```
 
-LLM 通过 OpenAI 兼容接口接入；`.env` 中的配置会被 CLI 自动加载。OCR 服务接收 URL。`OCR_PUBLIC_DIR` 中的文件必须能通过 `OCR_PUBLIC_BASE_URL` 访问。未配置模型 Key 时，`--extractor auto` 使用确定性抽取器，便于本地演示和回归测试。
+LLM 通过 OpenAI 兼容接口接入；`.env` 中的配置会被 CLI 自动加载。OCR 服务接收 URL。`OCR_PUBLIC_DIR` 中的文件必须能通过 `OCR_PUBLIC_BASE_URL` 访问。未配置 LLM 模型 Key 时，`--extractor auto` 使用确定性抽取器，便于本地演示和回归测试。
 
 配置 `VISION_MODEL` 后，低于 `CONFIDENCE_THRESHOLD` 的 OCR 块会渲染对应 PDF 页或原始图片并调用视觉模型复核。`VISION_API_KEY` 和 `VISION_BASE_URL` 为空时回退到通用 LLM 配置。视觉复核置信度达标才替换原 OCR 块；否则保留原结果并进入复核。如不希望把账单图片发送给视觉模型服务，保持 `VISION_MODEL` 为空即可禁用。
 
@@ -73,7 +73,7 @@ uv run python -m http.server 8000 --directory tmp/ocr-public
 
 跨来源一致性只比较能够确认属于同一张单据的来源：优先要求单据号相同，其次提单号或订舱号相同。非空字段或同一费用行金额不一致时，系统保留附件中的主记录值，同时把冲突来源和双方值写入证据并进入复核；缺少共同业务键的来源不会被强行比较，避免把同一邮件中的不同附件误判为冲突。
 
-旧版 `.doc` 在 Windows 上优先通过 Microsoft Word COM 自动另存为 `.docx`；Word 不可用时再尝试 LibreOffice 的 `soffice`/`libreoffice`。两种转换后端都不可用时会返回待复核错误。
+旧版 `.doc` 在 Windows 上优先通过 Microsoft Word COM 自动另存为 `.docx`；Word 不可用时再尝试 LibreOffice 的 `soffice`/`libreoffice`。两种结构化转换后端都不可用或失败时，系统会调用 `antiword` 提取纯文本。antiword 模式不保留表格行列结构，会在来源元数据中明确标记，并继续执行常规校验和复核门禁。
 
 ## 运行
 
@@ -167,7 +167,7 @@ LLM 只负责非结构化语义抽取。金额计算、标准化、匹配、AR/A
 ## 已知限制
 
 - 图片识别依赖外部 OCR 服务。项目实现了 URL 发布、调用、重试和响应适配；端到端识别要求 OCR 服务能访问 `OCR_PUBLIC_BASE_URL`。
-- 旧版 `.doc` 在 Windows 依赖 Microsoft Word，非 Windows 或服务器环境建议安装 LibreOffice；两种后端都不可用时会明确返回待复核错误。
+- 旧版 `.doc` 在 Windows 优先使用 Microsoft Word，非 Windows 或服务器环境建议安装 LibreOffice。若两者都不可用，可安装 `antiword` 作为纯文本后备；该模式无法保留表格结构，三者都不可用时会明确返回待复核错误。
 - 外部已有账单系统字段尚未提供，当前通过 `BillRecord` 和 JSON 适配器接入。
 - 不包含汇率换算、Credit Note 的具体冲销科目映射和真实财务系统提交接口。
 

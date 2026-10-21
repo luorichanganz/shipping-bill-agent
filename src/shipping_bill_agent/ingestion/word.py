@@ -157,21 +157,89 @@ def _convert_legacy_doc(data: bytes) -> bytes:
     raise DocumentParseError(f"旧版 .doc 自动转换失败: {details}")
 
 
+def _decode_antiword_output(data: bytes) -> str:
+    for encoding in ("utf-8-sig", "gb18030", "cp1252"):
+        try:
+            return data.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return data.decode("utf-8", errors="replace")
+
+
+def _plain_text_blocks(text: str, source_id: str) -> list[ContentBlock]:
+    blocks: list[ContentBlock] = []
+    row_no = 0
+    for page_no, page in enumerate(text.split("\f"), start=1):
+        for line_no, line in enumerate(page.splitlines(), start=1):
+            value = line.strip()
+            if not value:
+                continue
+            row_no += 1
+            blocks.append(
+                ContentBlock(
+                    block_id=f"{source_id}:text{page_no}-{line_no}",
+                    block_type=BlockType.TEXT,
+                    text=value,
+                    page_no=page_no,
+                    row_no=row_no,
+                )
+            )
+    return blocks
+
+
+def _extract_with_antiword(data: bytes, source_id: str) -> list[ContentBlock]:
+    executable = shutil.which("antiword")
+    if not executable:
+        raise DocumentParseError("旧版 .doc 的纯文本后备不可用：当前环境未安装 antiword")
+    with tempfile.TemporaryDirectory(prefix="shipping-antiword-") as temp_dir:
+        source = Path(temp_dir) / "source.doc"
+        source.write_bytes(data)
+        completed = subprocess.run(
+            [executable, "-w", "0", str(source)],
+            check=False,
+            capture_output=True,
+            timeout=30,
+        )
+        if completed.returncode != 0:
+            detail = _decode_antiword_output(completed.stderr or completed.stdout).strip()
+            raise DocumentParseError(f"antiword 提取失败: {detail or '未知错误'}")
+        text = _decode_antiword_output(completed.stdout)
+        blocks = _plain_text_blocks(text, source_id)
+        if not blocks:
+            raise DocumentParseError("antiword 未输出可用文本")
+        return blocks
+
+
 def parse_word_bytes(data: bytes, file_name: str, context: ParserContext) -> list[SourceDocument]:
     digest = hashlib.sha256(data).hexdigest()
     source_id = f"word-{digest[:16]}"
+    blocks: list[ContentBlock] | None = None
+    mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    metadata: dict[str, object] = {}
     if file_name.lower().endswith(".doc"):
-        data = _convert_legacy_doc(data)
-    blocks = _parse_docx_data(data, source_id)
+        try:
+            data = _convert_legacy_doc(data)
+        except DocumentParseError as conversion_error:
+            try:
+                blocks = _extract_with_antiword(data, source_id)
+            except DocumentParseError as fallback_error:
+                raise DocumentParseError(f"{conversion_error}；{fallback_error}") from fallback_error
+            mime_type = "application/msword"
+            metadata = {
+                "legacy_doc_backend": "antiword",
+                "table_structure_available": False,
+            }
+    if blocks is None:
+        blocks = _parse_docx_data(data, source_id)
     return [
         SourceDocument(
             source_id=source_id,
             source_type="word",
             file_name=file_name,
-            mime_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            mime_type=mime_type,
             sha256=digest,
             parent_source_id=None,
-            metadata={},
+            metadata=metadata,
             blocks=blocks,
         )
     ]
